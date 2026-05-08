@@ -123,7 +123,7 @@ Mode used: light (default)
 
 ## Related
 
-- [figma-audit-skill](https://github.com/gaspanik/figma-audit-skill) — audit a Figma frame for AI-readiness before implementing it
+- [tailwind-to-figma-skill](https://github.com/gaspanik/tailwind-to-figma-skill) — the reverse direction: exports Tailwind CSS v4 `@theme` tokens as Figma Variables
 
 ---
 
