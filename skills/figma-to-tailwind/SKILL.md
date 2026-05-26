@@ -1,13 +1,13 @@
 ---
 name: figma-to-tailwind
-description: Reads all Variables from a Figma file URL and writes them as Tailwind CSS v4 @theme tokens into src/index.css.
+description: Reads all Variables from a Figma file URL and writes them as Tailwind CSS v4 @theme tokens into the project's Tailwind CSS entry file (found via grep, or src/index.css if none exists).
 argument-hint: <figma-url>
 allowed-tools: mcp__plugin_figma_figma__use_figma, Read, Edit, Bash
 ---
 
 # Import Figma Variables as Tailwind v4 Tokens
 
-Fetch all variables from the Figma file URL provided in `$ARGUMENTS` and write them as Tailwind CSS v4 `@theme` custom properties into `src/index.css`.
+Fetch all variables from the Figma file URL provided in `$ARGUMENTS` and write them as Tailwind CSS v4 `@theme` custom properties into the project's Tailwind CSS entry file.
 
 **Output language:** Respond in the same language the user is using in this conversation.
 
@@ -89,11 +89,23 @@ Convert Figma variable names (slash-separated) to kebab-case:
 
 - If a collection has multiple modes (light/dark, etc.), use the value from the **`defaultModeId`** mode
 
-## Step 4: Write to src/index.css
+## Step 4: Write to the Tailwind CSS entry file
+
+### Find the output file
+
+Use the `Bash` tool to locate the CSS file that imports Tailwind:
+
+```bash
+grep -rl --include="*.css" --exclude-dir=node_modules --exclude-dir=dist '@import ["'"'"']tailwindcss' . 2>/dev/null
+```
+
+- If **one file** is found → use it as the output target
+- If **multiple files** are found → ask the user which one to use
+- If **no file** is found → warn the user that no Tailwind CSS v4 entry file was detected, and ask them to provide the output path
 
 ### Check the existing file
 
-Read `src/index.css` and check whether an `@theme` block already exists.
+Read the target file and check whether an `@theme` block already exists.
 
 ### Write patterns
 
@@ -152,11 +164,11 @@ Report the following:
 - Number of collections and total variables imported
 - List of added/updated CSS custom properties (count per group)
 - Mode name used (if multiple modes were present)
-- Path to `src/index.css`
+- Path to the output CSS file
 
 ## Error handling
 
 - If fileKey cannot be extracted from the URL: ask the user to provide a valid Figma design file URL
 - If 0 variables are found: report that the file has no Variables defined
-- If `src/index.css` is not found: report that the file does not exist in the current directory and ask the user to confirm the output path
+- If no CSS file with `@import "tailwindcss"` is found: warn the user that Tailwind CSS v4 does not appear to be set up in this project, and ask them to provide the output path
 - If `use_figma` returns an error: check the error message before retrying (the operation is atomic — no partial writes occur)
