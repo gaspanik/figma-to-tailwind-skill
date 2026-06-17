@@ -95,9 +95,7 @@ Convert Figma variable names (slash-separated) to kebab-case:
 
 Use the `Bash` tool to locate the CSS file that imports Tailwind:
 
-```bash
-grep -rl --include="*.css" --exclude-dir=node_modules --exclude-dir=dist '@import ["'"'"']tailwindcss' . 2>/dev/null
-```
+Search for CSS files containing `@import "tailwindcss"` or `@import 'tailwindcss'` across the project (excluding `node_modules`/`dist`).
 
 - If **one file** is found → use it as the output target
 - If **multiple files** are found → ask the user which one to use
